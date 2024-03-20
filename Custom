@@ -1,0 +1,180 @@
+
+Imports pfcls
+Imports Microsoft.Office.Interop.Excel
+Public Class Form1
+
+    Dim creoWindow As IpfcWindow
+    Dim creoSession As IpfcSession
+    Dim creoBaseSession As IpfcBaseSession
+
+    Dim creoAsyncConnection As IpfcAsyncConnection
+    Dim creoCAsyncConnection As New CCpfcAsyncConnection
+    Dim creoModel As IpfcModel
+    Dim sParamName As String
+
+    Dim creoParamOwner As IpfcParameterOwner
+    Dim creoParam As IpfcParameter
+    Dim creoModelItem As CMpfcModelItem
+    Dim creoParamVal As IpfcParamValue
+    Dim creoBaseParam As IpfcBaseParameter
+
+    Dim xl As Microsoft.Office.Interop.Excel.Application
+    Dim xlBook As Workbook
+    Dim xlSheet As Worksheet
+    Dim xlCell As Range
+
+    Private Sub ButtonConnect_Click(sender As Object, e As EventArgs) Handles ButtonConnect.Click
+        Label_Info.Text = "Connecting..."
+        Label_Info.ForeColor = Color.Blue
+        creoAsyncConnection = creoCAsyncConnection.Connect(Nothing, Nothing, Nothing, Nothing)
+        creosession = creoAsyncConnection.Session
+        creoBaseSession = CType(creosession, IpfcBaseSession)
+        creoModel = creosession.CurrentModel
+        Label_Info.Text = "Connected "
+        Label_Info.ForeColor = Color.Green
+
+        xl = GetObject(, "Excel.Application")
+        xlBook = xl.ActiveWorkbook
+        xlSheet = xl.ActiveSheet
+    End Sub
+
+    Private Sub ButtonDisconnect_Click(sender As Object, e As EventArgs) Handles ButtonDisconnect.Click
+        If Not creoAsyncConnection Is Nothing AndAlso creoAsyncConnection.IsRunning Then
+            creoAsyncConnection.Disconnect(1)
+            Label_Info.Text = "Disconnected!"
+            Label_Info.ForeColor = Color.Red
+        End If
+    End Sub
+
+    Private Sub ChangeParameterValue(sParameterName As String, dParaValue As String)
+        creoParamOwner = creoModel
+        creoParam = creoParamOwner.GetParam(sParameterName)
+
+        creoModelItem = New CMpfcModelItem
+        creoParamVal = creoModelItem.CreateStringParamValue(dParaValue)
+
+        creoBaseParam = creoParam
+        creoBaseParam.Value = creoParamVal
+    End Sub
+
+    Private Sub Button_GDP_Click(sender As Object, e As EventArgs) Handles Button_GDP.Click
+
+        Dim creoParams = creosession.CurrentModel.ListParams()
+        Dim creoParam As Object
+        Dim creoParamValue As IpfcParamValue
+        Dim sParamName As String
+
+        Dim k As Integer = 0
+
+        For i = 0 To (creoParams.Count - 1)
+            creoParam = creoParams(i)
+            sParamName = creoParam.Name
+            creoParamValue = creoParam.Value
+
+
+            'ListBoxParams.Items.Add(sParamName & vbTab & " = " & creoParamValue.StringValue)
+            'xlCell = CType(xlSheet.Cells.Item(i + 1, 1), Range)
+            'xlCell.Value = sParamName
+
+            'xlCell = CType(xlSheet.Cells.Item(i + 1, 2), Range)
+            'xlCell.Value = creoParamValue.StringValue
+
+            If sParamName.ToUpper = "PANELBOARD_AMPERAGE".ToUpper Then
+                xlCell = xlSheet.Cells.Item(1, 2)
+                'xlCell = xlSheet.Cells.Item(k + 1, 1)
+                xlCell.Value = creoParamValue.StringValue
+            End If
+
+            If sParamName.ToUpper = "SHORT_CIRCUIT_CURRENT_RATING".ToUpper Then
+                xlCell = xlSheet.Cells.Item(2, 2)
+                'xlCell = xlSheet.Cells.Item(k + 1, 2)
+                xlCell.Value = creoParamValue.StringValue
+            End If
+
+            If sParamName.ToUpper = "RATED_FREQUENCY".ToUpper Then
+                xlCell = xlSheet.Cells.Item(3, 2)
+                'xlCell = xlSheet.Cells.Item(k + 1, 3)
+                xlCell.Value = creoParamValue.StringValue
+            End If
+
+            If sParamName.ToUpper = "PANELBOARD_AMPERAGE2".ToUpper Then
+                xlCell = xlSheet.Cells.Item(1, 3)
+                'xlCell = xlSheet.Cells.Item(k + 1, 1)
+                xlCell.Value = creoParamValue.StringValue
+            End If
+
+            If sParamName.ToUpper = "SHORT_CIRCUIT_CURRENT_RATING2".ToUpper Then
+                xlCell = xlSheet.Cells.Item(2, 3)
+                'xlCell = xlSheet.Cells.Item(k + 1, 2)
+                xlCell.Value = creoParamValue.StringValue
+            End If
+
+            If sParamName.ToUpper = "RATED_FREQUENCY2".ToUpper Then
+                xlCell = xlSheet.Cells.Item(3, 3)
+                'xlCell = xlSheet.Cells.Item(k + 1, 3)
+                xlCell.Value = creoParamValue.StringValue
+            End If
+
+            If sParamName.ToUpper = "PANELBOARD_AMPERAGE4".ToUpper Then
+                xlCell = xlSheet.Cells.Item(1, 4)
+                'xlCell = xlSheet.Cells.Item(k + 1, 1)
+                xlCell.Value = creoParamValue.StringValue
+            End If
+
+            If sParamName.ToUpper = "SHORT_CIRCUIT_CURRENT_RATING4".ToUpper Then
+                xlCell = xlSheet.Cells.Item(2, 4)
+                'xlCell = xlSheet.Cells.Item(k + 1, 2)
+                xlCell.Value = creoParamValue.StringValue
+            End If
+
+            If sParamName.ToUpper = "RATED_FREQUENCY4".ToUpper Then
+                xlCell = xlSheet.Cells.Item(3, 4)
+                'xlCell = xlSheet.Cells.Item(k + 1, 3)
+                xlCell.Value = creoParamValue.StringValue
+            End If
+        Next
+    End Sub
+
+    Private Sub Button_UDP_Click(sender As Object, e As EventArgs) Handles Button_UDP.Click
+
+        sParamName = "PANELBOARD_AMPERAGE"
+        xlCell = xlSheet.Cells.Item(1, 2)
+        ChangeParameterValue(sParamName, xlCell.Value)
+
+        sParamName = "SHORT_CIRCUIT_CURRENT_RATING"
+        xlCell = xlSheet.Cells.Item(2, 2)
+        ChangeParameterValue(sParamName, xlCell.Value)
+
+        sParamName = "RATED_FREQUENCY"
+        xlCell = xlSheet.Cells.Item(3, 2)
+        ChangeParameterValue(sParamName, xlCell.Value)
+
+        'sParamName = "PANELBOARD_AMPERAGE2"
+        'xlCell = xlSheet.Cells.Item(1, 3)
+        'ChangeParameterValue(sParamName, xlCell.Value)
+
+        'sParamName = "SHORT_CIRCUIT_CURRENT_RATING2"
+        'xlCell = xlSheet.Cells.Item(2, 3)
+        'ChangeParameterValue(sParamName, xlCell.Value)
+
+        'sParamName = "RATED_FREQUENCY2"
+        'xlCell = xlSheet.Cells.Item(3, 3)
+        'ChangeParameterValue(sParamName, xlCell.Value)
+
+        'sParamName = "PANELBOARD_AMPERAGE4"
+        'xlCell = xlSheet.Cells.Item(1, 4)
+        'ChangeParameterValue(sParamName, xlCell.Value)
+
+        'sParamName = "SHORT_CIRCUIT_CURRENT_RATING4"
+        'xlCell = xlSheet.Cells.Item(2, 4)
+        'ChangeParameterValue(sParamName, xlCell.Value)
+
+        'sParamName = "RATED_FREQUENCY4"
+        'xlCell = xlSheet.Cells.Item(3, 4)
+        'ChangeParameterValue(sParamName, xlCell.Value)
+
+        creoWindow = creoSession.CurrentWindow
+        creoWindow.Refresh()
+
+    End Sub
+End Class
